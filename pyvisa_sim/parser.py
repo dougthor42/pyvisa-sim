@@ -61,7 +61,7 @@ class SimpleChainmap(Generic[K, V]):
         raise KeyError(key)
 
 
-def _get_pair(dd: Dict[str, str]) -> Tuple[str, str]:
+def _get_pair(dd: Dict[str, str]) -> Tuple[str, Union[str, Literal[Responses.NO]]]:
     """Return a pair from a dialogue dictionary."""
     return dd["q"].strip(" "), dd["r"].strip(" ") if "r" in dd else NoResponse  # type: ignore[return-value]
 
