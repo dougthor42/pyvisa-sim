@@ -11,7 +11,7 @@ from pyvisa import constants, rname
 
 from .channels import Channels
 from .common import logger
-from .component import Component, NoResponse, OptionalBytes, to_bytes
+from .component import Component, NoResponse, OptionalBytes, to_bytes, OptionalStr
 
 
 class StatusRegister:
@@ -205,7 +205,7 @@ class Device(Component):
         return self._error_response.get(error_key)
 
     def add_eom(
-        self, type_class: str, query_termination: str, response_termination: str
+        self, type_class: str, query_termination: str, response_termination: OptionalStr
     ) -> None:
         """Add default end of message for a given interface type and resource class.
 
@@ -277,7 +277,7 @@ class Device(Component):
     _query_eom: bytes
 
     # Default end of message used in response operations
-    _response_eom: bytes
+    _response_eom: OptionalBytes
 
     #: Mapping between a name and a Channels object
     _channels: Dict[str, Channels]
@@ -294,7 +294,7 @@ class Device(Component):
 
     #: Stores the specific end of messages for device.
     #: TYPE CLASS -> (query termination, response termination)
-    _eoms: Dict[Tuple[constants.InterfaceType, str], Tuple[bytes, bytes]]
+    _eoms: Dict[Tuple[constants.InterfaceType, str], Tuple[bytes, OptionalBytes]]
 
     #: Buffer in which the user can read
     _output_buffer: bytearray

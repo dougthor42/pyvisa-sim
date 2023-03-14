@@ -194,14 +194,14 @@ class Component:
         self._getters = {}
         self._setters = []
 
-    def add_dialogue(self, query: str, response: str) -> None:
+    def add_dialogue(self, query: str, response: OptionalStr) -> None:
         """Add dialogue to device.
 
         Parameters
         ----------
         query : str
             Query to which the dialog answers to.
-        response : str
+        response : OptionalStr
             Response to the dialog query.
 
         """
@@ -211,7 +211,7 @@ class Component:
         self,
         name: str,
         default_value: str,
-        getter_pair: Optional[Tuple[str, str]],
+        getter_pair: Optional[Tuple[str, OptionalStr]],
         setter_triplet: Optional[Tuple[str, OptionalStr, OptionalStr]],
         specs: Dict[str, str],
     ):
@@ -223,7 +223,7 @@ class Component:
             Name of the property.
         default_value : str
             Default value of the property as a str.
-        getter_pair : Optional[Tuple[str, str]]
+        getter_pair : Optional[Tuple[str, OptionalStr]]
             Parameters for accessing the property value (query and response str)
         setter_triplet : Optional[Tuple[str, OptionalStr, OptionalStr]]
             Parameters for setting the property value. The response and error
@@ -252,22 +252,22 @@ class Component:
 
     #: Stores the queries accepted by the device.
     #: query: response
-    _dialogues: Dict[bytes, bytes]
+    _dialogues: Dict[bytes, OptionalBytes]
 
     #: Maps property names to value, type, validator
     _properties: Dict[str, Property]
 
     #: Stores the getter queries accepted by the device.
     #: query: (property_name, response)
-    _getters: Dict[bytes, Tuple[str, str]]
+    _getters: Dict[bytes, Tuple[str, OptionalStr]]
 
     #: Stores the setters queries accepted by the device.
     #: (property_name, string parser query, response, error response)
     _setters: List[Tuple[str, stringparser.Parser, OptionalBytes, OptionalBytes]]
 
     def _match_dialog(
-        self, query: bytes, dialogues: Optional[Dict[bytes, bytes]] = None
-    ) -> Optional[bytes]:
+        self, query: bytes, dialogues: Optional[Dict[bytes, OptionalBytes]] = None
+    ) -> Optional[OptionalBytes]:
         """Tries to match in dialogues
 
         Parameters
@@ -298,8 +298,8 @@ class Component:
     def _match_getters(
         self,
         query: bytes,
-        getters: Optional[Dict[bytes, Tuple[str, str]]] = None,
-    ) -> Optional[bytes]:
+        getters: Optional[Dict[bytes, Tuple[str, OptionalStr]]] = None,
+    ) -> Optional[OptionalBytes]:
         """Tries to match in getters
 
         Parameters
@@ -320,9 +320,10 @@ class Component:
 
         if query in getters:
             name, response = getters[query]
-            logger.debug("Found response in getter of %s" % name)
-            response = response.format(self._properties[name].get_value())
-            return response.encode("utf-8")
+            if response is not NoResponse:
+                logger.debug("Found response in getter of %s" % name)
+                response = response.format(self._properties[name].get_value())
+                return response.encode("utf-8")
 
         return None
 

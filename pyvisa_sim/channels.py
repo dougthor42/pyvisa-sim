@@ -79,7 +79,7 @@ class Channels(Component):
         self._getters = ChDict(__default__={})
         self._dialogues = ChDict(__default__={})
 
-    def add_dialogue(self, query: str, response: str) -> None:
+    def add_dialogue(self, query: str, response: OptionalStr) -> None:
         """Add dialogue to channel.
 
         Parameters
@@ -96,7 +96,7 @@ class Channels(Component):
         self,
         name: str,
         default_value: str,
-        getter_pair: Optional[Tuple[str, str]],
+        getter_pair: Optional[Tuple[str, OptionalStr]],
         setter_triplet: Optional[Tuple[str, OptionalStr, OptionalStr]],
         specs: Dict[str, str],
     ) -> None:
@@ -175,10 +175,10 @@ class Channels(Component):
     _ids: List[str]
 
     #: Dialogues organized by channel IDs
-    _dialogues: Dict[str, Dict[bytes, bytes]]  # type: ignore
+    _dialogues: Dict[str, Dict[bytes, OptionalBytes]]  # type: ignore
 
     #: Getters organized by channel ID
-    _getters: Dict[str, Dict[bytes, Tuple[str, str]]]  # type: ignore
+    _getters: Dict[str, Dict[bytes, Tuple[str, OptionalStr]]]  # type: ignore
 
     def _match_setters(self, query: bytes) -> Optional[OptionalBytes]:
         """Try to find a match"""

@@ -11,23 +11,12 @@ import pathlib
 from contextlib import closing
 from io import StringIO, open
 from traceback import format_exc
-from typing import (
-    Any,
-    BinaryIO,
-    Dict,
-    Generic,
-    Literal,
-    Mapping,
-    TextIO,
-    Tuple,
-    TypeVar,
-    Union,
-)
+from typing import Any, BinaryIO, Dict, Generic, Mapping, TextIO, Tuple, TypeVar, Union
 
 import yaml
 
 from .channels import Channels
-from .component import Component, NoResponse, Responses
+from .component import Component, NoResponse, OptionalStr
 from .devices import Device, Devices
 
 
@@ -61,14 +50,12 @@ class SimpleChainmap(Generic[K, V]):
         raise KeyError(key)
 
 
-def _get_pair(dd: Dict[str, str]) -> Tuple[str, Union[str, Literal[Responses.NO]]]:
+def _get_pair(dd: Dict[str, str]) -> Tuple[str, OptionalStr]:
     """Return a pair from a dialogue dictionary."""
     return dd["q"].strip(" "), dd["r"].strip(" ") if "r" in dd else NoResponse  # type: ignore[return-value]
 
 
-def _get_triplet(
-    dd: Dict[str, str]
-) -> Tuple[str, Union[str, Literal[Responses.NO]], Union[str, Literal[Responses.NO]]]:
+def _get_triplet(dd: Dict[str, str]) -> Tuple[str, OptionalStr, OptionalStr]:
     """Return a triplet from a dialogue dictionary."""
     return (
         dd["q"].strip(" "),
