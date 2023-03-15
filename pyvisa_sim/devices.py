@@ -11,7 +11,7 @@ from pyvisa import constants, rname
 
 from .channels import Channels
 from .common import logger
-from .component import Component, NoResponse, OptionalBytes, to_bytes, OptionalStr
+from .component import Component, NoResponse, OptionalBytes, OptionalStr, to_bytes
 
 
 class StatusRegister:
@@ -255,7 +255,8 @@ class Device(Component):
 
                 if response is not NoResponse:
                     self._output_buffer.extend(response)
-                    self._output_buffer.extend(eom)
+                    if eom is not NoResponse:
+                        self._output_buffer.extend(eom)
 
         finally:
             self._input_buffer = bytearray()
